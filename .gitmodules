@@ -1,0 +1,3 @@
+[submodule "php_date"]
+	path = php_date
+	url = git@github.com:weareoutman/php_date.git
