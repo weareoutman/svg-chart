@@ -7,73 +7,7 @@ svg{font:11px/1.25 'Lucida Grande','Lucida Sans Unicode',Verdana,Arial,Helvetica
 </style>
 </head>
 <body>
-<div style="float:left;">
-	<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="300" viewBox="0 0 600 300">
-		<defs>
-			<linearGradient x1="0" y1="0" x2="0" y2="50" gradientUnits="userSpaceOnUse" id="svg-chart-tips-bg">
-				<stop offset="0" stop-color="rgb(96,96,96)" stop-opacity="0.8"></stop>
-				<stop offset="1" stop-color="rgb(16,16,16)" stop-opacity="0.8"></stop>
-			</linearGradient>
-			<linearGradient x1="0" y1="0" x2="0" y2="200" gradientUnits="userSpaceOnUse" id="highcharts-8"><stop offset="0" stop-color="rgb(92, 89, 79)" stop-opacity="1"></stop><stop offset="1" stop-color="rgb(26, 24, 19)" stop-opacity="1"></stop></linearGradient>
-			<circle id="test-marker" cx="0" cy="0" r="4" stroke="white" stroke-width="1" stroke-opacity="0.5"></circle>
-		</defs>
-		<!-- <rect width="600" height="300" fill="url(#highcharts-8)"></rect> -->
-		<g class="svg-chart-plot" transform="translate(0,20)">
-			<g class="svg-chart-axis-x" fill="#666">
-				<g>
-					<path fill="none" stroke="#ccc" stroke-width="1" d="M 0 240.5 h 600"></path>
-					<path fill="none" stroke="#ccc" stroke-width="1" d="M 0 201.5 h 600"></path>
-					<path fill="none" stroke="#ccc" stroke-width="1" d="M 0 162.5 h 600"></path>
-				</g>
-				<g transform="translate(0,-5)">
-					<text text-anchor="start" y="240.5">0</text>
-					<text text-anchor="start" y="201.5">1</text>
-					<text text-anchor="start" y="162.5">2</text>
-				</g>
-			</g>
-			<g class="svg-chart-axis-y" fill="#666">
-				<g transform="translate(38.5,240)">
-					<path d="M 0 0 v 5" fill="none" stroke="#ccc" stroke-width="1"></path>
-					<text text-anchor="middle" x="0" y="17">01-23</text>
-				</g>
-				<g transform="translate(82.5,240)">
-					<path d="M 0 0 v 5" fill="none" stroke="#ccc" stroke-width="1"></path>
-					<text text-anchor="middle" x="0" y="17">45:67</text>
-				</g>
-			</g>
-			<g class="svg-chart-trend-lines">
-				<g transform="translate(0, -50) scale(1,5)">
-					<path d="M 0 49.60000000000002 L 10.83234067897558 46.19999999999999 L 16.24181060154854 43.47999999999999 L 18.98451459201906 42.120000000000005 L 27.10541989279333 40.75999999999999 L 29.807921381774868 40.08000000000001 L 32.50595592614652 38.72 L 35.21739130434783 38.03999999999999 L 43.38743299583085 35.32000000000002 L 46.09440142942228 34.639999999999986 L 48.79243597379393 34.639999999999986 L 54.28677784395474 34.639999999999986 L 62.45235259082787 32.60000000000002 L 73.25789160214413 31.24000000000001 L 78.6628945801072 31.919999999999987 L 81.36092912447886 31.919999999999987 L 92.17540202501489 31.24000000000001 L 138.1893984514592 31.24000000000001 L 178.68225134008338 31.919999999999987 L 181.39815366289457 31.919999999999987 L 184.1095890410959 31.24000000000001 L 281.74806432400237 31.24000000000001 L 297.9988088147707 31.24000000000001 L 311.90887432995834 31.24000000000001 L 366.22245384157236 30.560000000000002 L 377.12626563430615 30.560000000000002 L 409.79303156640856 29.879999999999995 L 420.6745086360929 29.879999999999995 L 458.67927337701013 29.879999999999995 L 469.52948183442527 29.19999999999999 L 540 28.52000000000001" fill="none" stroke="red" stroke-width="0.4"></path>
-					<path d="M 0 12.199999999999989 L 10.83234067897558 15.600000000000023 L 16.24181060154854 17.639999999999986 L 18.98451459201906 21.72 L 27.10541989279333 21.039999999999992 L 29.807921381774868 21.72 L 32.50595592614652 21.72 L 35.21739130434783 21.72 L 43.38743299583085 21.72 L 46.09440142942228 21.72 L 48.79243597379393 21.72 L 54.28677784395474 21.039999999999992 L 62.45235259082787 25.120000000000005 L 73.25789160214413 27.159999999999997 L 78.6628945801072 27.840000000000003 L 81.36092912447886 28.52000000000001 L 92.17540202501489 28.52000000000001 L 138.1893984514592 28.52000000000001 L 178.68225134008338 28.52000000000001 L 181.39815366289457 27.840000000000003 L 184.1095890410959 28.52000000000001 L 281.74806432400237 27.840000000000003 L 297.9988088147707 28.52000000000001 L 311.90887432995834 27.840000000000003 L 366.22245384157236 28.52000000000001 L 377.12626563430615 27.840000000000003 L 409.79303156640856 27.840000000000003 L 420.6745086360929 27.840000000000003 L 458.67927337701013 27.840000000000003 L 469.52948183442527 27.840000000000003 L 540 27.840000000000003" fill="none" stroke="blue" stroke-width="0.4"></path>
-					<path d="M 0 28.5 L 10.83234067897558 27.56000000000003 L 16.24181060154854 25.680000000000007 L 18.98451459201906 26.620000000000005 L 27.10541989279333 25.680000000000007 L 29.807921381774868 27.56000000000003 L 32.50595592614652 28.5 L 35.21739130434783 28.5 L 43.38743299583085 30.379999999999995 L 46.09440142942228 30.379999999999995 L 48.79243597379393 31.319999999999993 L 54.28677784395474 31.319999999999993 L 62.45235259082787 34.140000000000015 L 73.25789160214413 35.079999999999984 L 78.6628945801072 35.079999999999984 L 81.36092912447886 35.079999999999984 L 92.17540202501489 35.079999999999984 L 138.1893984514592 36.02000000000001 L 178.68225134008338 35.079999999999984 L 181.39815366289457 35.079999999999984 L 184.1095890410959 35.079999999999984 L 281.74806432400237 35.079999999999984 L 297.9988088147707 35.079999999999984 L 311.90887432995834 35.079999999999984 L 366.22245384157236 35.079999999999984 L 377.12626563430615 35.079999999999984 L 409.79303156640856 36.02000000000001 L 420.6745086360929 35.079999999999984 L 458.67927337701013 36.02000000000001 L 469.52948183442527 36.02000000000001 L 540 36.02000000000001" fill="none" stroke="green" stroke-width="0.4"></path>
-				</g>
-			</g>
-			<g class="svg-chart-markers">
-				<g transform="translate(10.5, 0)">
-					<path d="M 0 0 v 240" fill="#4572A7" stroke="#ccc" stroke-width="1" stroke-opacity="1"></path>
-				</g>
-				<g transform="translate(0, 160)">
-					<use class="marker" xlink:href="#test-marker" x="10.83234067897558" y="27.56000000000003" fill="red"></use>
-					<use class="marker" xlink:href="#test-marker" x="281.74806432400237" y="35.079999999999984" fill="blue"></use>
-				</g>
-			</g>
-			<g class="svg-chart-tips">
-				<g transform="translate(20, 140)">
-					<rect rx="3" ry="3" fill="none" x="0.5" y="0.5" width="120" height="91" fill-opacity="0.85" isShadow="true" stroke="black" stroke-opacity="0.15" stroke-width="1" transform="translate(1, 1)"></rect>
-					<rect rx="3" ry="3" fill="#fff" x="0.5" y="0.5" width="120" height="91" fill-opacity="0.85" stroke="#2f7ed8" stroke-width="1"></rect>
-					<text x="8" y="21" fill="#333" font-size="12px">
-						<tspan x="8" font-size="11px">4月17日 11:39</tspan>
-						<tspan x="8" dy="15" fill="red">胜</tspan><tspan> : </tspan><tspan font-weight="bold">2.13</tspan><tspan fill="red" font-weight="bold" font-size="13px"> ↑</tspan>
-						<tspan x="8" dy="15" fill="blue">平</tspan><tspan> : </tspan><tspan font-weight="bold">2.34</tspan><tspan fill="green" font-weight="bold" font-size="13px"> ↓</tspan>
-						<tspan x="8" dy="15" fill="green">负</tspan><tspan> : </tspan><tspan font-weight="bold">3.56</tspan>
-						<tspan x="8" dy="15">返还率</tspan><tspan> : </tspan><tspan font-size="11px">91.32%</tspan>
-					</text>
-				</g>
-			</g>
-		</g>
-	</svg>
-</div>
-<div id="container" style="float:right;"></div>
+<div id="container"></div>
 <script type="text/javascript" src="php_date/php_date.js"></script>
 <script type="text/javascript" src="svg-chart.js"></script>
 <script type="text/javascript" src="pseudo-data.js"></script>

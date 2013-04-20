@@ -4,9 +4,7 @@ var SvgChart = (function(){
 			xmlns: "http://www.w3.org/2000/svg",
 			xlink: "http://www.w3.org/1999/xlink"
 		},
-		// XMLNS = "http://www.w3.org/2000/svg",
 		SVG_VERSION = "1.1",
-		// XLINK = "http://www.w3.org/1999/xlink",
 		DEFAULT_STYLE = 'font:11px/1.25 "Lucida Grande","Lucida Sans Unicode",Verdana,Arial,Helvetica,sans-serif;';
 
 	var SvgChart = function(options){
@@ -57,9 +55,7 @@ var SvgChart = (function(){
 			r: 5,
 			stroke: "#fff",
 			"stroke-width": 1,
-			"stroke-opacity": 0.5,
-			// visibility: "hidden",
-			// opacity: 0
+			"stroke-opacity": 0.5
 		});
 		var line = createSvgElement("path", {
 			id: "line",
@@ -81,8 +77,8 @@ var SvgChart = (function(){
 		svg.appendChild(back);
 
 		// axises
-		var axisY = createAxisY(this);
-		var axisX = createAxisX(this);
+		createAxisY(this);
+		createAxisX(this);
 
 		// plot
 		plot = createSvgElement("g", {
@@ -92,10 +88,108 @@ var SvgChart = (function(){
 		this.plot = plot;
 
 		// trend lines
-		var trends = createTrends(this);
+		createTrends(this);
+
+		createTips(this);
 
 		document.querySelector(this.container).appendChild(svg);
 	};
+
+	function copy(object) {
+		var result = {};
+		for (var i in object) {
+			if (object.hasOwnProperty(i)) {
+				result[i] = object[i];
+			}
+		}
+		return result;
+	}
+
+	function createTips(chart) {
+		var tips = createSvgElement("g", {
+			visibility: "hidden",
+			opacity: 0
+		});
+		var attrs = {
+			rx: 3,
+			ry: 3,
+			x: 0.5,
+			y: 0.5,
+			width: 120,
+			height: 99,
+			fill: "#fff",
+			"fill-opacity": 0.85,
+			stroke: "#2f7ed8",
+			"stroke-width": 1
+		};
+
+		var shadows = [
+			[5, 0.05],
+			[3, 0.1],
+			[1, 0.15]
+		];
+
+		var shadowAttrs = copy(attrs);
+		shadowAttrs.transform = "translate(1,1)";
+		shadowAttrs.fill = "none";
+		shadowAttrs.stroke = "#000";
+		delete shadowAttrs["fill-opacity"];
+
+		for (var i = 0; i < shadows.length; ++ i) {
+			shadowAttrs["stroke-width"] = shadows[i][0];
+			shadowAttrs["stroke-opacity"] = shadows[i][1];
+			var shadow = createSvgElement("rect", shadowAttrs);
+			tips.appendChild(shadow);
+		}
+		var rect = createSvgElement("rect", attrs);
+		tips.appendChild(rect);
+
+		var text = createSvgElement("text", {
+			x: 8,
+			y: 21,
+			fill: "#333",
+			"font-size": "12px"
+		});
+		tips.appendChild(text);
+
+		var tpl = chart.tipsTpl,
+			rElem = /<tspan((?:\s+[^=]+="[^"]*")*)>([^<]*)<\/tspan>/g,
+			rAttr = /\s+([^=]+)="([^"]*)"/g,
+			mElem, mAttr;
+
+		var tipsElems = {},
+			tipsAttrs = {};
+
+		while (mElem = rElem.exec(tpl)) {
+			console.log("span");
+			var tspan = createSvgElement("tspan");
+			text.appendChild(tspan);
+			if (mElem[1]) {
+				console.log("attrs");
+				var a = {};
+				while (mAttr = rAttr.exec(mElem[1])) {
+					if (/^\{\$\w+\}$/.test(mAttr[2])) {
+						tipsAttrs[mAttr[2].match(/^\{\$(\w+)\}$/)[1]] = [tspan, mAttr[1]];
+					} else {
+						a[mAttr[1]] = mAttr[2];
+					}
+					console.log(mAttr[1], mAttr[2]);
+				}
+				setAttributes(tspan, a);
+			}
+			if (/^\{\$\w+\}$/.test(mElem[2])) {
+				tipsElems[mElem[2].match(/^\{\$(\w+)\}$/)[1]] = tspan;
+			} else {
+				tspan.appendChild(document.createTextNode(mElem[2]));
+			}
+			console.log("content", mElem[2]);
+		}
+
+		chart.svg.appendChild(tips);
+		chart.tips = tips;
+		chart.tipsElems = tipsElems;
+		chart.tipsAttrs = tipsAttrs;
+	}
 
 	function createTrends(chart) {
 		var trends = createSvgElement("g");
@@ -161,9 +255,13 @@ var SvgChart = (function(){
 
 		chart.svg.onmousemove = function(e){
 			// console.dir("onmouseover");
-			// console.dir(svg);
+			// console.dir(e);
 			// debugger;
-			var x = e.offsetX - chart.plot_x,
+			var bcr = chart.svg.getBoundingClientRect();
+			// console.dir(bcr);
+			var offsetX = e.clientX - bcr.left,
+				offsetY = e.clientY - bcr.top;
+			var x = offsetX - chart.plot_x,
 				len = xList.length,
 				index = 0;
 			for (var i = 0; i < len; ++ i) {
@@ -192,6 +290,25 @@ var SvgChart = (function(){
 				visibility: "visible",
 				opacity: 1
 			});
+
+			var d = chart.tipsCb(data[index].time, data[index].values, data[index-1] && data[index-1].values);
+			for (i in d) {
+				if (d.hasOwnProperty(i)) {
+					if (i in chart.tipsElems) {
+						chart.tipsElems[i].textContent = d[i];
+					}
+					if (i in chart.tipsAttrs) {
+						var a = {};
+						a[chart.tipsAttrs[i][1]] = d[i];
+						setAttributes(chart.tipsAttrs[i][0], a);
+					}
+				}
+			}
+			setAttributes(chart.tips, {
+				visibility: "visible",
+				opacity: 1,
+				transform: "translate("+ (offsetX + 10) + "," + (offsetY - 48) + ")"
+			});
 		};
 		chart.svg.onmouseout = function(){
 			// console.log("onmouseout");
@@ -202,6 +319,10 @@ var SvgChart = (function(){
 				});
 			}
 			setAttributes(line, {
+				visibility: "hidden",
+				opacity: 0
+			});
+			setAttributes(chart.tips, {
 				visibility: "hidden",
 				opacity: 0
 			});
