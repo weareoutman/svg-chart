@@ -45,8 +45,12 @@ var options = {
 	container: "#container",
 	lineCount: 3,
 	lineColors: colors,
+	lineNames: ["胜", "平", "负"],
+	legendWidth: 60,
+	tipsWidth: 120,
+	tipsHeight: 100,
 	tipsTpl: [
-		'<tspan x="8" font-size="12px" fill="#999">{$time}</tspan>',
+		'<tspan x="8" font-size="12px" fill="#666">{$time}</tspan>',
 		'<tspan x="8" dy="16" fill="' + colors[0] + '">胜</tspan><tspan> : </tspan><tspan font-weight="bold">{$win}</tspan><tspan> </tspan><tspan fill="{$cwin}" font-weight="bold" font-size="13px">{$twin}</tspan>',
 		'<tspan x="8" dy="16" fill="' + colors[1] + '">平</tspan><tspan> : </tspan><tspan font-weight="bold">{$draw}</tspan><tspan> </tspan><tspan fill="{$cdraw}" font-weight="bold" font-size="13px">{$tdraw}</tspan>',
 		'<tspan x="8" dy="16" fill="' + colors[2] + '">负</tspan><tspan> : </tspan><tspan font-weight="bold">{$lost}</tspan><tspan> </tspan><tspan fill="{$clost}" font-weight="bold" font-size="13px">{$tlost}</tspan>',

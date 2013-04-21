@@ -13,10 +13,12 @@ var SvgChart = (function(){
 		}
 
 		this.plot_x = 5;
-		this.plot_y = 20;
+		this.plot_y = 35;
 		this.plot_w = this.width - 10;
-		this.plot_h = this.height - 60;
+		this.plot_h = this.height - 65;
 	};
+
+	SvgChart.supported = !!(document.createElementNS && document.createElementNS(NS.xmlns, "svg").createSVGRect);
 
 	SvgChart.factory = function(options){
 		return new SvgChart(options);
@@ -24,16 +26,8 @@ var SvgChart = (function(){
 
 	SvgChart.prototype.setData = function(data){
 		this.data = data;
-
-		// analyse data
-		var y_scales = getDataScales(data);
-		console.dir(y_scales);
-		this.y_scales = y_scales;
-
-		// analyse time
-		var x_scales = getTimeScales(data);
-		console.dir(x_scales);
-		this.x_scales = x_scales;
+		this.y_scales = getDataScales(data);
+		this.x_scales = getTimeScales(data);
 	};
 	SvgChart.prototype.render = function(){
 		// svg
@@ -72,13 +66,15 @@ var SvgChart = (function(){
 			y: 0,
 			width: this.width,
 			height: this.height,
-			fill: "#fff"
+			fill: "#f5f5f5"
 		});
 		svg.appendChild(back);
 
 		// axises
 		createAxisY(this);
 		createAxisX(this);
+
+		createLegends(this);
 
 		// plot
 		plot = createSvgElement("g", {
@@ -94,6 +90,44 @@ var SvgChart = (function(){
 
 		document.querySelector(this.container).appendChild(svg);
 	};
+
+	function createLegends(chart) {
+		var start = (chart.width - (chart.legendWidth * chart.lineCount)) / 2;
+		var legends = createSvgElement("g", {
+			transform: "translate(" + start + ",15)"
+		});
+		for (var i = 0; i < chart.lineCount; ++ i) {
+			var legend = createSvgElement("g", {
+				transform: "translate(" + (i * chart.legendWidth) + ",0)"
+			});
+			var path = createSvgElement("path", {
+				fill: "none",
+				stroke: chart.lineColors[i],
+				"stroke-width": 2,
+				d: "M 0 0 h 20"
+			});
+			var marker = createSvgElement("use", {
+				"xlink:href": "#marker",
+				fill: chart.lineColors[i],
+				x: 10,
+				y: 0,
+				transform: "translate(2.25,0) scale(0.8,0.8)"
+			});
+			var text = createSvgElement("text", {
+				"text-anchor": "start",
+				fill: "#274b6d",
+				"font-size": "12px",
+				x: 25,
+				y: 4
+			});
+			text.appendChild(document.createTextNode(chart.lineNames[i]));
+			legend.appendChild(path);
+			legend.appendChild(marker);
+			legend.appendChild(text);
+			legends.appendChild(legend);
+		}
+		chart.svg.appendChild(legends);
+	}
 
 	function copy(object) {
 		var result = {};
@@ -115,8 +149,8 @@ var SvgChart = (function(){
 			ry: 3,
 			x: 0.5,
 			y: 0.5,
-			width: 120,
-			height: 99,
+			width: chart.tipsWidth - 1,
+			height: chart.tipsHeight - 1,
 			fill: "#fff",
 			"fill-opacity": 0.85,
 			stroke: "#2f7ed8",
@@ -161,11 +195,11 @@ var SvgChart = (function(){
 			tipsAttrs = {};
 
 		while (mElem = rElem.exec(tpl)) {
-			console.log("span");
+			// console.log("span");
 			var tspan = createSvgElement("tspan");
 			text.appendChild(tspan);
 			if (mElem[1]) {
-				console.log("attrs");
+				// console.log("attrs");
 				var a = {};
 				while (mAttr = rAttr.exec(mElem[1])) {
 					if (/^\{\$\w+\}$/.test(mAttr[2])) {
@@ -173,7 +207,7 @@ var SvgChart = (function(){
 					} else {
 						a[mAttr[1]] = mAttr[2];
 					}
-					console.log(mAttr[1], mAttr[2]);
+					// console.log(mAttr[1], mAttr[2]);
 				}
 				setAttributes(tspan, a);
 			}
@@ -182,7 +216,7 @@ var SvgChart = (function(){
 			} else {
 				tspan.appendChild(document.createTextNode(mElem[2]));
 			}
-			console.log("content", mElem[2]);
+			// console.log("content", mElem[2]);
 		}
 
 		chart.svg.appendChild(tips);
@@ -254,13 +288,12 @@ var SvgChart = (function(){
 		chart.plot.appendChild(markers);
 
 		chart.svg.onmousemove = function(e){
-			// console.dir("onmouseover");
-			// console.dir(e);
-			// debugger;
-			var bcr = chart.svg.getBoundingClientRect();
-			// console.dir(bcr);
-			var offsetX = e.clientX - bcr.left,
+			var bcr = chart.svg.getBoundingClientRect(),
+				offsetX = e.clientX - bcr.left,
 				offsetY = e.clientY - bcr.top;
+			if (offsetY < chart.plot_y || offsetY > chart.plot_y + chart.plot_h) {
+				return removeTips();
+			}
 			var x = offsetX - chart.plot_x,
 				len = xList.length,
 				index = 0;
@@ -304,29 +337,35 @@ var SvgChart = (function(){
 					}
 				}
 			}
+			var tipsX = offsetX + 10,
+				tipsY = offsetY - chart.tipsHeight / 2;
+			if (tipsX + chart.tipsWidth > chart.width - 5) {
+				tipsX = offsetX - chart.tipsWidth - 10;
+			}
+			if (tipsY + chart.tipsHeight > chart.height - 35) {
+				tipsY = chart.height - chart.tipsHeight - 35;
+			}
+			if (tipsY < chart.plot_y + 5) {
+				tipsY = chart.plot_y + 5;
+			}
 			setAttributes(chart.tips, {
 				visibility: "visible",
 				opacity: 1,
-				transform: "translate("+ (offsetX + 10) + "," + (offsetY - 48) + ")"
+				transform: "translate("+ tipsX + "," + tipsY + ")"
 			});
 		};
-		chart.svg.onmouseout = function(){
-			// console.log("onmouseout");
+		chart.svg.onmouseout = removeTips;
+		function removeTips() {
+			var hidden = {
+				visibility: "hidden",
+				opacity: 0
+			};
 			for (var i = 0; i < l; ++ i) {
-				setAttributes(markerList[i], {
-					visibility: "hidden",
-					opacity: 0
-				});
+				setAttributes(markerList[i], hidden);
 			}
-			setAttributes(line, {
-				visibility: "hidden",
-				opacity: 0
-			});
-			setAttributes(chart.tips, {
-				visibility: "hidden",
-				opacity: 0
-			});
-		};
+			setAttributes(line, hidden);
+			setAttributes(chart.tips, hidden);
+		}
 	}
 
 	function createAxisX(chart) {
