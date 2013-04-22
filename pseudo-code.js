@@ -11,38 +11,13 @@ var data = (function(source){
 	return data;
 })(source);
 
-/*var data = [
-	{
-		time: Date.now(),
-		values: [100, 200]
-	},
-	{
-		time: Date.now() + 3000,
-		values: [300, 400]
-	}
-];
-*/
-
-// # init
-// set width, height
-// set container
-
-// # data
-// analyse data:
-
-// # render
-// create svg
-// create y-axis
-// create x-axis
-// create trend line
-
 // var colors = ["#ed561b", "#8bbc21", "#2f7ed8"];
 var colors = ["#f30", "#3a0", "#03f"];
 
 var options = {
 	width: 600,
 	height: 400,
-	container: "#container",
+	container: document.querySelector("#container"),
 	lineCount: 3,
 	lineColors: colors,
 	lineNames: ["胜", "平", "负"],
@@ -78,7 +53,7 @@ var options = {
 			lost: self[2].toFixed(2),
 			clost: color(2),
 			tlost: arrow(2),
-			"ret": (1 / (1 / self[0] + 1 / self[1] + 1 / self[2])).toFixed(2) + "%"
+			"ret": (100 / (1 / self[0] + 1 / self[1] + 1 / self[2])).toFixed(2) + "%"
 		}
 	}
 };

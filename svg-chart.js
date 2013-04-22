@@ -1,5 +1,6 @@
 
 var SvgChart = (function(){
+	"use strict";
 	var NS = {
 			xmlns: "http://www.w3.org/2000/svg",
 			xlink: "http://www.w3.org/1999/xlink"
@@ -55,8 +56,8 @@ var SvgChart = (function(){
 			id: "line",
 			d: "M 0 0 v " + this.plot_h,
 			stroke: "#ccc",
-			"stroke-width": 1,
-		})
+			"stroke-width": 1
+		});
 		svg.appendChild(defs).appendChild(marker);
 		defs.appendChild(line);
 
@@ -66,7 +67,7 @@ var SvgChart = (function(){
 			y: 0,
 			width: this.width,
 			height: this.height,
-			fill: "#f5f5f5"
+			fill: "#fff"
 		});
 		svg.appendChild(back);
 
@@ -77,7 +78,7 @@ var SvgChart = (function(){
 		createLegends(this);
 
 		// plot
-		plot = createSvgElement("g", {
+		var plot = createSvgElement("g", {
 			transform: "translate(" + this.plot_x + "," + this.plot_y + ")"
 		});
 		svg.appendChild(plot);
@@ -88,7 +89,7 @@ var SvgChart = (function(){
 
 		createTips(this);
 
-		document.querySelector(this.container).appendChild(svg);
+		this.container.appendChild(svg);
 	};
 
 	function createLegends(chart) {
@@ -195,11 +196,9 @@ var SvgChart = (function(){
 			tipsAttrs = {};
 
 		while (mElem = rElem.exec(tpl)) {
-			// console.log("span");
 			var tspan = createSvgElement("tspan");
 			text.appendChild(tspan);
 			if (mElem[1]) {
-				// console.log("attrs");
 				var a = {};
 				while (mAttr = rAttr.exec(mElem[1])) {
 					if (/^\{\$\w+\}$/.test(mAttr[2])) {
@@ -207,7 +206,6 @@ var SvgChart = (function(){
 					} else {
 						a[mAttr[1]] = mAttr[2];
 					}
-					// console.log(mAttr[1], mAttr[2]);
 				}
 				setAttributes(tspan, a);
 			}
@@ -216,7 +214,6 @@ var SvgChart = (function(){
 			} else {
 				tspan.appendChild(document.createTextNode(mElem[2]));
 			}
-			// console.log("content", mElem[2]);
 		}
 
 		chart.svg.appendChild(tips);
@@ -267,7 +264,7 @@ var SvgChart = (function(){
 			xList.push(x);
 			for (var j = 0; j < l; ++ j) {
 				var val = d.values[j];
-				y = chart.plot_h - (val - y_start) * y_pixels;
+				var y = chart.plot_h - (val - y_start) * y_pixels;
 				pathList[j].push(x + " " + y);
 				yList[j].push(y);
 			}
@@ -278,7 +275,7 @@ var SvgChart = (function(){
 				fill: "none",
 				stroke: colors[i],
 				"stroke-width": 2,
-				d: "M " + pathList[i].join(" L ")
+				d: data.length == 1 ? "M " + pathList[i][0].replace(/^\S+/, "0") + " h " + chart.plot_w : "M " + pathList[i].join(" L ")
 			});
 			trends.appendChild(path);
 		}
@@ -391,10 +388,10 @@ var SvgChart = (function(){
 		for (var i = 0; i < ticks.length; ++ i) {
 			var x = pixels * (ticks[i] - start);
 			x = 0.5 + Math.round(x - 0.5);
-			if (x < 25) {
+			if (x < 20) {
 				continue;
 			}
-			if (x > w) {
+			if (x > w - 20) {
 				break;
 			}
 			date.setTime(ticks[i]);
@@ -416,7 +413,7 @@ var SvgChart = (function(){
 					break;
 				case "day":
 				case "week":
-					text = php_date("m-d", date);
+					text = php_date("n月j日", date);
 					break;
 			}
 			var line = createSvgElement("path", {
@@ -517,11 +514,22 @@ var SvgChart = (function(){
 			}
 		}
 
+		if (max == min) {
+			return {
+				min: min,
+				max: max,
+				start: min - min,
+				end: max + max,
+				interval: 1,
+				ticks: ["", min, ""]
+			};
+		}
+
 		var span = max - min;
 		var digit = Math.floor(Math.log(span) / Math.LN10) - 1;
 		var temp = Math.floor(span / Math.pow(10, digit));
 
-		var interval, count;
+		var interval, count, start, end;
 		if (temp < 16) {
 			interval = 2;
 		} else if (temp < 20) {
@@ -555,9 +563,6 @@ var SvgChart = (function(){
 			max: max,
 			start: + start.toPrecision(15),
 			end: + end.toPrecision(15),
-			// span: span,
-			// digit: digit,
-			// temp: temp,
 			interval: interval,
 			ticks: ticks
 		};
@@ -573,6 +578,15 @@ var SvgChart = (function(){
 			ticks = [],
 			date = new Date(start),
 			setter, getter;
+		if (start == end) {
+			return {
+				start: start - 8.64e7,
+				end: end + 8.64e7,
+				interval: 8.84e7,
+				unit: "day",
+				ticks: ["", start, ""]
+			};
+		}
 		if (unitName == "week") {
 			unitRange /= 7;
 			multiple *= 7;
