@@ -571,7 +571,7 @@ var SvgChart = (function(){
 	function getTimeScales(data) {
 		var start = data[0].time, 
 			end = data[data.length - 1].time,
-			normalized = normalizeTimeTickInterval((end - start) / 10),
+			normalized = normalizeTimeTickInterval((end - start) / 8),
 			unitName = normalized.unitName,
 			unitRange = normalized.unitRange,
 			multiple = normalized.multiple,
@@ -587,11 +587,11 @@ var SvgChart = (function(){
 				ticks: ["", start, ""]
 			};
 		}
-		if (unitName == "week") {
+		/*if (unitName == "week") {
 			unitRange /= 7;
 			multiple *= 7;
 			unitName = "day";
-		}
+		}*/
 		switch (unitName) {
 			case "millisecond":
 				setter = "setMilliseconds";
@@ -660,8 +660,8 @@ var SvgChart = (function(){
 			["second", [1, 2, 5, 10, 15, 30]],
 			["minute", [1, 2, 5, 10, 15, 30]],
 			["hour", [1, 2, 3, 4, 6, 8, 12]],
-			["day", [1, 2]],
-			["week", [1, 2]],
+			["day", [1, 2, 5, 10, 15]],
+			// ["week", [1, 2]],
 			["month", [1, 2, 3, 4, 6]],
 			["year", null]
 		];
